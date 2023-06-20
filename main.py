@@ -31,20 +31,39 @@ async def server_status(ctx: SlashContext, server_ip: str):
                 if response.status == 200:
                     if data.get("online"):
                         player_count = data["players"]["online"]
-                        players = "\n".join(data["players"]["list"])
-                        await ctx.send(f"The server is online with {player_count} players: {players}")
+                        player_list = data["players"]["list"]
+                        players = "\n".join(player_list) if player_list else "None"
+                        embed = discord.Embed(
+                            title="Minecraft Server Status",
+                            description=f"The server is online with {player_count} players.",
+                            color=discord.Color.green()
+                        )
+                        embed.add_field(name="Players Online", value=players, inline=False)
+                        await ctx.send(embed=embed)
                     else:
-                        await ctx.send("The server is online, but no players are currently connected.")
+                        embed = discord.Embed(
+                            title="Minecraft Server Status",
+                            description="The server is online, but no players are currently connected.",
+                            color=discord.Color.green()
+                        )
+                        await ctx.send(embed=embed)
                 else:
-                    await ctx.send("The server is offline or unreachable.")
+                    embed = discord.Embed(
+                        title="Minecraft Server Status",
+                        description="The server is offline or unreachable.",
+                        color=discord.Color.red()
+                    )
+                    await ctx.send(embed=embed)
     except Exception:
-        await ctx.send("An error occurred while checking the server status.")
+        embed = discord.Embed(
+            title="Minecraft Server Status",
+            description="An error occurred while checking the server status.",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)        
 
 
-        
-        
-        
-        
+
         
 @bot.event
 async def on_slash_command_error(ctx, ex):
